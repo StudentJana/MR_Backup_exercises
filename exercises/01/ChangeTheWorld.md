@@ -1,7 +1,7 @@
 ---
 title: "Exercise 1 - Change the World"
 documentclass: scrreprt
-subtitle: "183.660 Mobile Robotics"
+subtitle: "191.012 Mobile Robotics"
 numbersections: true
 date: \today
 ---
@@ -16,7 +16,7 @@ The purpose of this exercise is to get you familiar with ROS and to prepare your
 
 Read all instructions carefully and **include all commands used as part of the documentation!** Further, document it in such detail, that your actions can be reproduced by others.
 
-Lastly, prepare your system according to the instructions of the [project root](https://gitlab.tuwien.ac.at/lva-mr/2024/project).
+Lastly, prepare your system according to the instructions of the [project root](https://gitlab.tuwien.ac.at/lva-mr/solutions/2026/root-mr).
 
 # Simulation (40 Points)
 
@@ -178,7 +178,6 @@ Work through the [Using turtlesim and rqt](https://docs.ros.org/en/jazzy/Tutoria
 Document the following tasks in your Documentation to get points.
 
 * Use `rqt_graph` to visualize the nodes running (1 Point) 
-* Use `rqt_plot` to plot the history of selected forward velocities and rotational velocities (1 Point) 
 * Document the pushing frequents of the *twist* message on *cmd_vel* using `ros2 topic` (1 Point) 
 * Use `ros2 topic pub` to publish a number or string (1 Point) 
 * Use `ros2 topic echo` to show what you have published with `ros2 topic pub` (1 Point) 
