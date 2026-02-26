@@ -37,3 +37,5 @@ ros2 launch mr_nav laser_filter.launch.py
 ros2 launch mr_nav localization_launch.py map:=$MR_DIR/ws02/install/mr_nav/share/mr_nav/config/map/cave/map.yaml
 ros2 launch mr_nav navigation_launch.py
 ```
+
+

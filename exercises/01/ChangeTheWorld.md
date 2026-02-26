@@ -221,4 +221,5 @@ Document the following tasks in your Documentation to get points.
 * Use `ros2 topic pub` to publish a number or string (1 Point) 
 * Use `ros2 topic echo` to show what you have published with `ros2 topic pub` (1 Point) 
 * Add a bonus questions to the `questions_ex1_{YOUR_STUDENT_ID}.md` (1 Point) 
+* Write a installation description for the project root for the "new" MacOS (3 Point) 
 
