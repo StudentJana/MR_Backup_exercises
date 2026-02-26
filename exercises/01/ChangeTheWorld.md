@@ -11,8 +11,9 @@ date: \today
 The purpose of this exercise is to get you familiar with ROS and to prepare your system for the upcoming assignments. It is divided into three parts:
 
 1. Simulation (40 Points)
-2. ROS2 navigation2 (50 Points)
-3. Documentation (10 Points)
+2. ROS2 navigation2 (44 Points)
+3. Questions (6 Points)
+4. Documentation (10 Points)
 
 Read all instructions carefully and **include all commands used as part of the documentation!** Further, document it in such detail, that your actions can be reproduced by others.
 
@@ -44,7 +45,7 @@ In the first part you have to get to know how the simulation, called Stage, work
 ![Bender 1](./res/stage_bender01.png){ width=50% }
 ![Bender 2](./res/stage_bender02.png){ width=50% }
 
-# Nav2 (50 Points)
+# Nav2 (44 Points)
 
 [nav2](https://docs.nav2.org/) includes nodes to
 
@@ -79,7 +80,7 @@ cd ws02/src/mr
 git pull
 ```
 
-## RViz (10 Points)
+## RViz (9 Points)
 
 Start the simulation and `teleop_twist_keyboard`, same as in the previous sections. In this task you need to visualize the environment of the robot using `rviz`.
 
@@ -123,7 +124,7 @@ __Hints:__
 - Pay attention to the indentations in the configuration file.
 - Do not forget to send the relevant lifecycle messages from a separate console
 
-## AMCL Self Localization (10 Points)
+## AMCL Self Localization (5 Points)
 
 AMCL should be used for self-localization to establish a link between your map and the robot base. Details can be found at [https://github.com/ros-planning/navigation2/tree/main/nav2_amcl](https://github.com/ros-planning/navigation2/tree/main/nav2_amcl). (Sadly, the documentation is still lacking and now very good.)
 
@@ -161,6 +162,44 @@ Check out the navigation stack https://docs.nav2.org/, and you will see how comp
 
 Create a ros2 python launch file to start everything except the simulation environment (hint: take a look at the already existing launch files in the mr_nav/launch/nav2-folder).
 
+# Questions (6 Points)
+
+Create a markdown document named `questions_ex1_{YOUR_STUDENT_ID}.md` in the `ws02/src/mr/exercises` folder containing three multiple-choice questions related to the exercise: one easy, one medium, and one expert level. 
+Each question and its four answer options must be no longer than 200 characters each. The document must follow the format below:
+Replace **YOUR_NAME**, **YOUR_STUDENT_ID**, **TRUE**, and **FALSE** with your actual name and student ID. Set the answer to **true** if the option is correct; otherwise, set it to **false**.
+Upload your questions file, `questions_ex1_{YOUR_STUDENT_ID}.md`, alongside the documentation PDF. 
+
+```
+# Mobile Robotics
+## Questions
+* Author: YOUR_NAME
+* StudentID: YOUR_STUDENT_ID
+* Semester: 2026S
+
+### Exercise 1
+
+#### Easy Question
+Your Question
+* [FALSE] Answer option 1
+* [TRUE] Answer option 2
+* [FALSE] Answer option 3
+* [FALSE] Answer option 4
+
+#### Medium Question
+Your Question
+* [TRUE] Answer option 1
+* [TRUE] Answer option 2
+* [FALSE] Answer option 3
+* [TRUE] Answer option 4
+
+#### Expert Question
+Your Question
+* [FALSE] Answer option 1
+* [TRUE] Answer option 2
+* [TRUE] Answer option 3
+* [FALSE] Answer option 4
+```
+
 # Documentation (10 Points)
 
 * Your documentation should not be more than 5-6 pages (1 Point) - primarily screenshots (Alt-Print or Shift Print). In this assignment, it will be the only thing you have to submit, no code.
@@ -181,4 +220,5 @@ Document the following tasks in your Documentation to get points.
 * Document the pushing frequents of the *twist* message on *cmd_vel* using `ros2 topic` (1 Point) 
 * Use `ros2 topic pub` to publish a number or string (1 Point) 
 * Use `ros2 topic echo` to show what you have published with `ros2 topic pub` (1 Point) 
+* Add a bonus questions to the `questions_ex1_{YOUR_STUDENT_ID}.md` (1 Point) 
 
