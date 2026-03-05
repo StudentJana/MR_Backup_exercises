@@ -44,21 +44,22 @@ Tell us how you enabled the mouse integration and how you can use the middle but
 We would also like you to get familiar with windows/tabs.
 Check out how new windows are created and renamed. 
 
-+ Enable mouse support: 1 Point
-+ 5 shortcuts: 1 Point
-+ Using middle mouse button: 1 Point
-+ Split screen: 1 Point
-+ Attach/Detach: 1 Point
-+ Handling Windows: 1 Point
++ Enable mouse support: (1 Point)
++ 5 shortcuts: (1 Point)
++ Using middle mouse button: (1 Point)
++ Split screen: (1 Point)
++ Attach/Detach: (1 Point)
++ Handling Windows: (1 Point)
 
 # Environment and Framework (6 Points)
-Be prepared to answer questions regarding the environment and framework used:
-* What does it mean to `source` ROS or the framework?
-* Why is there an `env.sh` file, and why does it generate a `.env.local`?
-* What is the purpose of the `.devcontainer` folder, and what does it contain?
-* What needs to be modified to build a devcontainer for a different ROS version or Linux distribution?
-* What is the purpose of the `.bashrc` file, and why is this question being asked?
-* How and why are the files .bashrc, env.sh, devcontainer.json, and the Dockerfiles connected.
+Be prepared to answer questions regarding the environment and framework used. Use one line or a few keywords per point to summarize your answers in your documentations.
+
+* What does it mean to `source` ROS or the framework? (1 Point)
+* Why is there an `env.sh` file, and why does it generate a `.env.local`? (1 Point)
+* What is the purpose of the `.devcontainer` folder, and what does it contain? (1 Point)
+* What needs to be modified to build a devcontainer for a different ROS version or Linux distribution? (1 Point)
+* What is the purpose of the `.bashrc` file, and why is this question being asked? (1 Point)
+* How and why are the files .bashrc, env.sh, devcontainer.json, and the Dockerfiles connected. (1 Point)
 
 
 # Simulation (22 Points)
