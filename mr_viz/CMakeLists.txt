@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.8)
 project(mr_viz)
-add_definitions(-DMR_VIZ__USE_MY_CODE_UP_TO=100)    # Zero for students
+add_definitions(-DMR_VIZ__USE_MY_CODE_UP_TO=0)    # Zero for students
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)

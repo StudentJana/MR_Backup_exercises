@@ -75,7 +75,8 @@ In this task, you need to graphically present the laser measurements of the robo
 
 <img src="res/laser_visualization.png" alt="drawing" width="400"/>
 
-> Most of the code you need to change is located in `ws02/src/mr_viz/src/mr_viz/local_view_node.cpp`. Check the `#if MR_VIZ__USE_MY_CODE_UP_TO >= x` `#else` `#endif` macros. These indicate the places where you are supposed to place your code. Your code should go between `#else` and `#endif`.
+Most of the code you need to change is located in `ws02/src/mr_viz/src/mr_viz/local_view_node.cpp`. Check the `#if MR_VIZ__USE_MY_CODE_UP_TO >= x` `#else` `#endif` macros. These indicate the places where you are supposed to place your code. Your code should go between `#else` and `#endif`.
+Please verify that the CMake definition `MR_VIZ__USE_MY_CODE_UP_TO` in `ws02/src/mr/mr_viz/CMakeLists.txt` is set to zero for students.
 
 ## Local View (30 Points)
 
