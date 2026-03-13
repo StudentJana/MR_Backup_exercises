@@ -39,11 +39,13 @@ First update/pull, build and source the framework:
 cd $PROJECT_ROOT
 git pull
 git pull ./ws02/src/mr
+touch ./ws02/src/mr/mr_nav/CATKIN_IGNORE  # Optional to remove dependencies to Nav2
 make build-ws00
 make build-ws01
 make build-ws02
 source ./env.sh
 ```
+
 
 Start the simulation, then the local planner node and finally the visualization, each with a separate command. In this way, you can restart the planner without restarting the simulation.
 ```bash
@@ -62,7 +64,7 @@ Answer the following questions in your documentation:
 * What happens if you change the mode? (1 Point)
 * Compile everything using VSCode and show screenshots of how you debug the `move_node.py` node.
    * Compile a workspace using Ctrl+Shift+B (1 Point)
-   * Compile a single package using Ctrl+Shift+B with the existing `tasks.json` (1 Point)
+   * Compile a single package using Ctrl+Shift+B with the existing `tasks.json` (1 Point) (Note: https://gitlab.tuwien.ac.at/lva-mr/2026/root-mr/-/issues/22)
    * Add a build task that builds only mr_viz by editing the `tasks.json` and set it as a default task (1 Point)
    * Add or modify a launch entry for the cpp `move` executable in `mr_move` by changing the `launch.json` which starts the executable in your wanderer mode and show how you can use the gui provided by VSCode to debug it (1 Point)
 * Document how to use `ros2 topic` to print a ros2 topic list and message content on the terminal. (1 Point)
