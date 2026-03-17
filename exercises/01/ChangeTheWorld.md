@@ -42,8 +42,10 @@ It's good practice to regularly update your local files so you do not miss out o
 ```sh
 cd $PROJECT_ROOT
 git pull
+make clone-ws02 # clones repositories needed for the exercises ws02/src/mr
 cd ws02/src/mr
-git pull
+git pull        # makes shure that the repo is up to date
+make build-ws02 # calles colcon build for the ws02
 ```
 
 # General (18 Points)
