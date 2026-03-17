@@ -21,6 +21,30 @@ Further, document it in such detail, that your actions can be reproduced by othe
 
 Before continuing, make sure your system is prepared according to the instructions within the [project root](https://gitlab.tuwien.ac.at/lva-mr/solutions/2026/root-mr). All further commands are expected to be run within the container.
 
+## Prerequisites {-}
+
+You have to install all relevant tools, if they have not yet been installed.
+
+```sh
+sudo apt-get update
+sudo apt-get install -y \
+    ros-$ROS_DISTRO-teleop-tools \
+    ros-$ROS_DISTRO-slam-toolbox \
+    ros-$ROS_DISTRO-mouse-teleop \
+    ros-$ROS_DISTRO-navigation2 \
+    ros-$ROS_DISTRO-nav2-bringup
+```
+
+### Update the Exercise Environment
+
+It's good practice to regularly update your local files so you do not miss out on any hotfixes or additional clarifications in exercise descriptions:
+
+```sh
+cd $PROJECT_ROOT
+git pull
+cd ws02/src/mr
+git pull
+```
 
 # General (18 Points)
 First, it's time to get more familiar with the setup and framework. This means you'll need to use a terminal, an editor, and other essential tools.
@@ -67,7 +91,7 @@ Now it's time to get more familiar with some essential tools used in this course
 In particular, we will be working with the Stage simulator in order to simulate a physical environment (a "world") for our robot to exist in.
 
 ## Starting the Environment (5 Points)
-Start the Stage simulator and use the `teleop_twist_keyboard` node to drive a simulated robot as described in the README of the root repository. Document your actions.
+Start the Stage simulator and use the `teleop_twist_keyboard` node to drive a simulated robot as described in the README of the root repository. Document your actions. Note that this is the package installed above using the `apt install` command, other packages can be installed similarly.
 
 ## Make your own World (12 Points)
 Make a copy of the `cave.world` file and change it such that it looks like your favorite environment.
@@ -96,31 +120,6 @@ This task might take some time, so feel free to skip it and come back after you 
 * Navigate (`move_base`).
 
 Your task is to use these packages to navigate between two points and to document your approach. Screenshots and 2 sentences are normally enough, but you might have to explain what you did in your submission talk.
-
-## Prerequisites {-}
-
-You have to install all relevant tools, if they have not yet been installed.
-
-```sh
-sudo apt-get update
-sudo apt-get install -y \
-    ros-$ROS_DISTRO-teleop-tools \
-    ros-$ROS_DISTRO-slam-toolbox \
-    ros-$ROS_DISTRO-mouse-teleop \
-    ros-$ROS_DISTRO-navigation2 \
-    ros-$ROS_DISTRO-nav2-bringup
-```
-
-### Update the Exercise Environment
-
-It's good practice to regularly update your local files so you do not miss out on any hotfixes or additional clarifications in exercise descriptions:
-
-```sh
-cd $PROJECT_ROOT
-git pull
-cd ws02/src/mr
-git pull
-```
 
 ## RViz (9 Points)
 
@@ -181,7 +180,7 @@ To start the self-localization, run the below command. After this, you need to i
 ros2 launch mr_nav localization_launch.py map:=$PROJECT_ROOT/.......
 ```
 
-Now you can drive using the teleop node, and you will hopefully see the robot on the correct spot. The particles used for the self localization can be visualized as a `PoseArray` from the topic ParticleCloud.
+Now you can drive using the teleop node, and you will hopefully see the robot on the correct spot. The particles used for the self localization can be visualized as a `nav2_msgs/msg/ParticleCloud` from the topic ParticleCloud.
 You will receive 4 Points for the working amcl and 1 Point if you can drive with `mouse_teleop` as shown in the screenshot.
 
 ![Mouse Teleop, AMCL, Rviz](./res/amcl_mouse_teleop.png)
