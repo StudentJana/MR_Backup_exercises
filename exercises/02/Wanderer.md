@@ -36,10 +36,11 @@ The last part consists of the documentation of your work. You will have to answe
 For this exercise, you need to have completed the __Installation and Setup__ and the first exercise.
 First update/pull, build and source the framework:
 ```bash
+cd $PROJECT_ROOT/ws02/src/mr
+git pull
 cd $PROJECT_ROOT
 git pull
-git pull ./ws02/src/mr
-touch ./ws02/src/mr/mr_nav/CATKIN_IGNORE  # Optional to remove dependencies to Nav2
+touch $PROJECT_ROOT/ws02/src/mr/mr_nav/CATKIN_IGNORE  # Optional to remove dependencies to Nav2
 make build-ws00
 make build-ws01
 make build-ws02
