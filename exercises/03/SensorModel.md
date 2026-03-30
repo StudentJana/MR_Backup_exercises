@@ -150,7 +150,7 @@ If your visualization is working, you should now see particles in "correct" loca
 * Set the parameter `-p sensor_model:=beam`.
 * Set the parameter `-p sensor_model.draw_z_exp:=true`.
 
-### Compute and plot expected measurments (10 Points)
+### Compute and plot expected measurments (8 Points)
  
 Finish the function `ParticleFilterVisualization::plot_expected_measurments()`. If `ParticleFilter::compute_expected_measurment` is not finished you will see something like this.
 
@@ -161,7 +161,7 @@ Finish the function `ParticleFilter::compute_expected_measurment`. Now the plot 
 ![](res/08-draw-expected-measurment.png)
 
 
-### Compute the pseudo-density lookup (10 Points)
+### Compute the pseudo-density lookup (8 Points)
 
 Finish the function `ParticleFilter::compute_pseudo_density_lookup`. This function should populate the lookup table `pseudo_density_fnc_` and generate a gnuplot file at the expected measurement `param_->gnuplot_z_exp`, which can be viewed using the following command.
 
@@ -179,12 +179,15 @@ You might have to install gnuplot using `sudo apt install gnuplot`.
 ![](res/08-gnuplot_pseudo_density_fnc.png)
 
 
-### Weight of particles using beam-based sensor model with pseudo-density lookup (5 Points)
+### Weight of particles using beam-based sensor model with pseudo-density lookup (8 Points)
 
 Finish the function object/lambda expression `weight_sample_beam_model` in `ParticleFilter::compute_weights`. The lambda expression `weight_sample_beam_model` is called for every sample.
 
 Set the parameter `-p sensor_model.draw_z_exp:=false` to ensure a clean view of the map, and increase the number of samples to `-p nr_of_samples:=10000`. You should now be able to generate images similar to those produced by the scan-based model.
 
+### Visualize the sensor_model (1 Point)
+
+Display which **sensor_model** mode is currently being used by writing beam or scan model into the visualization.
 
 ## 7. Python Launch Files (7 Points)
 There is a launch file `pf_launch.py` which allows you to launch the mr_pf node with the following commands
