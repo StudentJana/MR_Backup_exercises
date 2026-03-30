@@ -135,8 +135,8 @@ Hint:
 
 If your visualization is working, you should now see particles in "correct" locations highlighted.
 
+![](res/07-weights00.png)
 ![](res/07-weights01.png)
-![](res/07-weights_parameter.png)
 
 
 ## 6. Beam-based Sensor model (25 Points)
