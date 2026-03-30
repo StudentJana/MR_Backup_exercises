@@ -11,9 +11,21 @@ date: \today
 
 This exercise focuses on the implementation of the sensor models of a particle filter. You need to implement a beam and scan base sensor model to calculate weights for a robot's states predictions $`x_t`$, depending on $`z_t`$, $`x_{t-1}`$ and $`m`$.
 
-In the lecture you have learned two different approaches to this: the Beam Model and Scan Model. The latter you need to implement in this exercise.
+The exercise is divided into multiple parts:
 
-For more information, also see S. Thrun, W. Burgard, and D. Fox, [Probabilistic Robotics - Chapter 6](https://tuwel.tuwien.ac.at/mod/resource/view.php?id=2397734) page 158 and 172.
+1. tf2 (15 Points)
+2. Likelihood Field Visualization (5 Points)
+3. Likelihood Field Computation (10 Points)
+4. Sample Plotting (10 Points)
+5. Weight of particles using scan-based sensor model (17 Points)
+6. Beam-based Sensor model (25 Points)
+7. Python Launch Files (7 Points)
+8. Questions (6 Points)
+9. Documentation (5 Points)
+
+In the lecture you have learned two different approaches to this: the Beam Model and Scan Model. Both need to be implemented in this exercise.
+
+For more information, also see S. Thrun, W. Burgard, and D. Fox, [Probabilistic Robotics - Chapter 6](https://tuwel.tuwien.ac.at/pluginfile.php/4879118/mod_resource/content/1/Thrun_2005_chapter6.pdf) page 158 and 172.
 `@ToDo` statements have been placed in the assignment code, to aid in completing this exercise.
 
 You will be working with the `tuw_geometry` library, which already implements a lot of common geometric operations.
@@ -22,7 +34,7 @@ The API reference can be found [here](https://docs.ros.org/en/humble/p/tuw_geome
 
 
 ### Update the Exercise Environment
-We made some modifications to the root repository. Pull the [root-mr](https://gitlab.tuwien.ac.at/lva-mr/2026/root-mr) and rebuild the devcontainer; it now mounts a persistent user folder (`.devcontainer/user`) into the container's home directory. This preserves your shell configurations (e.g., `.bashrc`, `.tmux.conf`, `.bash_histroy`) across rebuilds. We also provide tmux configurations in `$PROJECT_ROOT/tmux` for later use.
+We made some modifications to the root repository. Pull the [root-mr](https://gitlab.tuwien.ac.at/lva-mr/2026/root-mr) and rebuild the devcontainer; it now mounts a persistent user folder (`.devcontainer/user`) into the container's home directory. This preserves your shell configurations (e.g., `.bashrc`, `.tmux.conf`, `.bash_history`) across rebuilds. We also provide tmux configurations in `$PROJECT_ROOT/tmux` for later use.
 
 
 ```sh
@@ -47,7 +59,7 @@ tmuxinator start -p ./tmux/particle-filter.yml
 A naive implementation of the algorithm might look like this:
 1. For a given state $x_t$ and a single measurement $`z_{t_k}`$ the coordinates at which the laser beam (supposedly) hit an obstacle are calculated in world coordinates.
 2. The minimum distance from this "hit" to the next known obstacle in the map is calculated (a naive implementation would just go through all map cells, calculate their relative distances to the hit and take the minimum)
-3. With the minimum distance and the measurement characteristics of the laser (parameters $`z_{hit}`$, $`\sigma_{hit}`$, $`z_{random}`$, $`z_{max}`$) the probability that $`z_{t_k}`$ was indeed obtained from $x_t$ can be calculated. This probability is also known as the weight of the measurement.
+3. With the minimum distance and the measurement characteristics of the laser (parameters $`z_{hit}`$, $`\sigma_{hit}`$, $`z_{rand}`$, $`z_{max}`$) the probability that $`z_{t_k}`$ was indeed obtained from $x_t$ can be calculated. This probability is also known as the weight of the measurement.
 
 As a complete laser scan contains many single measurements, these steps have to be performed for every single measurement of the scan (which can be performance intensive).
 For each $x_t$, the weights of all single measurements have to be multiplied.
@@ -57,7 +69,7 @@ The resulting total weight specifies how well the laser scan matches a certain p
 Following this idea gives us a first approach to localize a robot in a map:
 
 * The correct pose of the robot __is unknown__.
-* The current laser measurements and a map __is known__.
+* The current laser measurements and a map __are known__.
 * We now distribute many particles (> 10000) - each particle represents a possible pose - and calculate their respective weights. The particle with the highest assigned weight most likely represents the correct pose of the robot.
 
 ![Laser Data Plot](res/07-weights00.png)
@@ -150,7 +162,7 @@ If your visualization is working, you should now see particles in "correct" loca
 * Set the parameter `-p sensor_model:=beam`.
 * Set the parameter `-p sensor_model.draw_z_exp:=true`.
 
-### Compute and plot expected measurments (8 Points)
+### Compute and plot expected measurements (8 Points)
  
 Finish the function `ParticleFilterVisualization::plot_expected_measurments()`. If `ParticleFilter::compute_expected_measurment` is not finished you will see something like this.
 
@@ -171,7 +183,8 @@ gnuplot -e "set terminal wxt noraise; while (1) { plot \
 	'/tmp/pseudo-density.txt' using 1:3 with lines title 'p_{short}', \
 	'/tmp/pseudo-density.txt' using 1:5 with lines title 'p_{rand}', \
 	'/tmp/pseudo-density.txt' using 1:6 with lines title 'p_{pseudo-density}'; \
-	pause 1 }"exit
+	pause 1; }"
+exit
 ```
 
 You might have to install gnuplot using `sudo apt install gnuplot`.
@@ -253,7 +266,7 @@ The question sentence.
 * [FALSE] Answer option 4
 ```
 
-## 10. Documentation (5 Points)
+## 9. Documentation (5 Points)
 
 * Your documentation should not be more than 4-5 pages (excluding title page) with screenshots but __no code__. (1 Point)
 * Document every part with screenshots. (2 Points)
