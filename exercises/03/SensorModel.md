@@ -185,7 +185,7 @@ Finish the function object/lambda expression `weight_sample_beam_model` in `Part
 Set the parameter `-p sensor_model.draw_z_exp:=false` to ensure a clean view of the map, and increase the number of samples to `-p nr_of_samples:=10000`. You should now be able to generate images similar to those produced by the scan-based model.
 
 
-## 6. Python Launch Files (7 Points)
+## 7. Python Launch Files (7 Points)
 There is a launch file `pf_launch.py` which allows you to launch the mr_pf node with the following commands
 
 ```sh
@@ -206,7 +206,7 @@ The code part that defines the arguments given to the node (`parameters=` and fo
 
 Hint: One way to do it is by using OpaqueFunctions.
 
-## Questions (6 Points)
+## 8. Questions (6 Points)
 
 Create a markdown document named `questions_ex3_{YOUR_STUDENT_ID}.md` (without the {}) in the `ws02/src/mr/exercises` folder containing three multiple-choice questions related to the exercise: two based on the content of this exercise and one based on the lecture theory.
 Each question sentence and its four answer options must be no longer than 200 characters each and the question title not longer than 50 characters.
@@ -249,7 +249,7 @@ The question sentence.
 * [FALSE] Answer option 4
 ```
 
-## Documentation (5 Points)
+## 10. Documentation (5 Points)
 
 * Your documentation should not be more than 4-5 pages (excluding title page) with screenshots but __no code__. (1 Point)
 * Document every part with screenshots. (2 Points)
