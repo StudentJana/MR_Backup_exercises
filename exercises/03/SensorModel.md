@@ -135,8 +135,9 @@ Hint:
 
 If your visualization is working, you should now see particles in "correct" locations highlighted.
 
-![](res/07-weights00.png)
 ![](res/07-weights01.png)
+![](res/07-weights02.png)
+![](res/07-weights_parameter.png)
 
 
 ## 6. Beam-based Sensor model (25 Points)
@@ -153,11 +154,11 @@ If your visualization is working, you should now see particles in "correct" loca
  
 Finish the function `ParticleFilterVisualization::plot_expected_measurments()`. If `ParticleFilter::compute_expected_measurment` is not finished you will see something like this.
 
-![](res/draw-expected-measurment_dummy.png)
+![](res/08-draw-expected-measurment_dummy.png)
 
 Finish the function `ParticleFilter::compute_expected_measurment`. Now the plot should show you the beams used.
 
-![](res/draw-expected-measurment.png)
+![](res/08-draw-expected-measurment.png)
 
 
 ### Compute the pseudo-density lookup (10 Points)
@@ -175,7 +176,7 @@ gnuplot -e "set terminal wxt noraise; while (1) { plot \
 
 You might have to install gnuplot using `sudo apt install gnuplot`.
 
-![](res/gnuplot_pseudo_density_fnc.png)
+![](res/08-gnuplot_pseudo_density_fnc.png)
 
 
 ### Weight of particles using beam-based sensor model with pseudo-density lookup (5 Points)
