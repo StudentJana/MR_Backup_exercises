@@ -1,0 +1,11 @@
+# ./.tmuxinator.yml
+
+name: mr
+
+windows:
+  - simulation:
+      layout: even-vertical
+      panes: 
+        - ros2 launch stage_ros2 stage.launch.py world:=cave
+        - ros2 run mr_move move_node.py --ros-args -r scan:=base_scan -p mode:=wanderer
+        - read -p "press a key";  ros2 run mr_pf pf_node --ros-args -r scan:=base_scan -p map_file:=./ws02/install/mr_pf/share/mr_pf/config/maps/cave.png -p use_sim_time:=true
