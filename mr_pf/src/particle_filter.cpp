@@ -219,7 +219,7 @@ void ParticleFilter::compute_weights(const vector<std::pair<tuw::Point2D, tuw::P
                 (void)M;    /// to silence a warning about unused variables
                 (void)beam; /// to silence a warning about unused variables
 
-                // double qr = param_->z_rand / param_->z_max;
+                // double qr = param_->z_rand / range_max;
                 // Point2D p = M * beam.first;
 
                 // qh = param_->z_hit * ...
