@@ -455,15 +455,15 @@ void ParticleFilter::compute_likelihood_field()
 
     /**
      * @ToDo Sensor Model
-     * using the cv::distanceTransform and the boost::math::pdf
+     * using the cv::distanceTransform and the lambda normal_pdf
      * Here, the likelihood field is computed using the following steps.
      * - First the distance transform is called on the map which outputs the distance to the nearest pixels holding the value 0
      *   of all other pixels. Use the matrix distance_field_pixel_ to store the result.
-     * - To transform from pixels to metric values, the field has to be divided by scale_.
+     * - To transform from pixels to metric values, the field has to be divided by a scale.
      *   Use the matrix distance_field_ to store the result.
      * - The pdf can then be used on the metric distance field to obtain the likelihood values.
      *   Use the matrix likelihood_field_ to store the result.
-     **/
+     **/ 
     if (param_->level > ParticleFilterParameter::COMPUTE_LIKELIHOOD_FIELD)
     {
     }

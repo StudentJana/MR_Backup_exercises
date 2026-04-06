@@ -70,7 +70,7 @@ namespace mr
         double rate_of_beams_used;                             /// number of beams use
         bool random_beams_used;                                /// on true random beams are used
         bool disable_update;                                   /// disable update
-        double duration_offset;                                /// duration offset / offset for forward prediction
+        double motion_dt_override;                             /// motion model dt override / offset for forward prediction
         bool continues_reset;                                  /// on true reset data after each interation
         double alpha1, alpha2, alpha3, alpha4, alpha5, alpha6; /// Motion Model parameter
         double resample_rate;                                  /// resample rate

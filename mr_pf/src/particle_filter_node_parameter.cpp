@@ -77,7 +77,7 @@ void ParticleFilterNodeParameter::declare_parameters()
     declare_default_parameter<bool>("sensor_model.draw_z_exp", false, "on true draws the expected measurments used (beam-based model only).");
     declare_default_parameter<bool>("sensor_model.random_beams", false, "on true random beams are used");
     declare_default_parameter<bool>("motion_model.disable", false, "disable motion update");
-    declare_default_parameter<double>("motion_model.duration_offset", 0.0, 0.0, 10., 0.1, "motion duration offset [s]");
+    declare_default_parameter<double>("motion_model.motion_dt_override", 0.0, 0.0, 10., 0.1, "dt override for motion model [s]");
     declare_default_parameter<double>("motion_model.alpha1", 0.3, 0., 10., 0.001, "motion noise alpha 1");
     declare_default_parameter<double>("motion_model.alpha2", 0.1, 0., 10., 0.001, "motion noise alpha 2");
     declare_default_parameter<double>("motion_model.alpha3", 0.3, 0., 10., 0.001, "motion noise alpha 3");
@@ -119,7 +119,7 @@ void ParticleFilterNodeParameter::callback_update_parameters()
     n_.get_parameter<double>("sensor_model.rate_of_beams_used", rate_of_beams_used);
     n_.get_parameter("sensor_model.random_beams", random_beams_used);
     n_.get_parameter("motion_model.disable", disable_update);
-    n_.get_parameter("motion_model.duration_offset", duration_offset);
+    n_.get_parameter("motion_model.motion_dt_override", motion_dt_override);
     n_.get_parameter("motion_model.alpha1", alpha1);
     n_.get_parameter("motion_model.alpha2", alpha2);
     n_.get_parameter("motion_model.alpha3", alpha3);
