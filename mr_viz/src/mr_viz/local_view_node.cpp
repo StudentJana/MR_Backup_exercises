@@ -23,10 +23,9 @@ LocalViewNode::LocalViewNode(rclcpp::NodeOptions options)
    **/
 #if MR_VIZ__USE_MY_CODE_UP_TO >= 2
 #else
-    /**
-     * @node your code
-     **/
-    // sub_laser_ =
+    sub_laser_=this->create_subscription<sensor_msgs::msg::LaserScan>("scan", 10, std::bind(&LocalViewNode::callback_laser, this, _1));
+    sub_cmd_vel_=create_subscription<geometry_msgs::msg::Twist>("cmd_vel", 10, std::bind(&LocalViewNode::callback_cmd_vel, this, _1));
+
 #endif
 
   /**
@@ -74,22 +73,30 @@ void LocalViewNode::update_transforamtion(){
 
 #if MR_VIZ__USE_MY_CODE_UP_TO >= 1
 #else
-    //dx_ =   // visual width
-    //dy_ =   // visual height
-    //sx_ =   // scaling x
-    //sy_ =   // scaling y
-    //ox_ =   // offset image space x
-    //oy_ =   // offset image space y
-    //mx_ =   // visual image space x
-    //my_ =   // visual image space y
-    cv::Matx<double, 3, 3 > Tw ( 1, 0, 0, 0, 1, 0, 0, 0, 1 ); // translation visual space
-    cv::Matx<double, 3, 3 > Sc ( 1, 0, 0, 0, 1, 0, 0, 0, 1 ); // scaling
-    cv::Matx<double, 3, 3 > Sp ( 1, 0, 0, 0, 1, 0, 0, 0, 1 ); // mirroring
-    cv::Matx<double, 3, 3 > R ( 1, 0, 0, 0, 1, 0, 0, 0, 1 );  // rotation
-    cv::Matx<double, 3, 3 > Tm ( 1, 0, 0, 0, 1, 0, 0, 0, 1 ); // translation image space
-    Mw2m_ = Tm * R * Sp * Sc * Tw;
-    Mw2m_ = cv::Matx<double, 3, 3 > ( 15, 3, 150, 2, 5, 220, 0, 0, 1 ); ///  @ToDo remove this line dummy matrix
-    Mm2w_ = Mw2m_.inv();                                                ///  @ToDo compute it without inv()
+    double dx_ = map_max_x_-map_min_x_;  // visual width
+    double dy_ = map_max_y_-map_min_y_;  // visual height
+    double sx_ = map_width_pix_/dx_;  // scaling x
+    double sy_ = map_height_pix_/dy_;  // scaling y
+    double ox_ = -(map_max_x_ + map_min_x_) / 2.0;  // offset image space x
+    double oy_ = -(map_max_y_ + map_min_y_) / 2.0;  // offset image space y
+    double mx_ = map_width_pix_ / 2.0;  // visual image space x
+    double my_ = map_height_pix_ / 2.0;  // visual image space y
+    cv::Matx<double, 3, 3 > Tw ( 1, 0, ox_, 0, 1, oy_, 0, 0, 1 ); // translation visual space
+    cv::Matx<double, 3, 3 > Sc ( sy_, 0, 0, 0, sx_, 0, 0, 0, 1 ); // scaling
+    cv::Matx<double, 3, 3 > Sp ( -1, 0, 0, 0, 1, 0, 0, 0, 1 ); // mirroring
+    cv::Matx<double, 3, 3 > R ( cos(map_rotation_+M_PI/2), -sin(map_rotation_+M_PI/2), 0, sin(map_rotation_+M_PI/2), cos(map_rotation_+M_PI/2), 0, 0, 0, 1 );  // rotation
+    cv::Matx<double, 3, 3 > Tm ( 1, 0, mx_, 0, 1, my_, 0, 0, 1 ); // translation image space
+    Mw2m_ =Tm * R * Sp * Sc * Tw;
+    //In general the H⁻1=[R^T -R^t*d; 0 1] but because scaling and mirroring can't use that so we need inverse for each matrix
+    cv::Matx<double, 3, 3> Tw_inv(1, 0, -ox_, 0, 1, -oy_, 0, 0, 1); 
+    cv::Matx<double, 3, 3> Sc_inv(1.0/sx_, 0, 0, 0, 1.0/sy_, 0, 0, 0, 1); 
+    cv::Matx<double, 3, 3> Sp_inv(-1, 0, 0, 0, 1, 0, 0, 0, 1); 
+    
+    //H⁻1=[R^T -R^t*d; 0 1] 
+    cv::Matx<double, 3, 3> R_inv(cos(map_rotation_+M_PI/2), sin(map_rotation_+M_PI/2), 0, -sin(map_rotation_+M_PI/2), cos(map_rotation_+M_PI/2), 0, 0, 0, 1); 
+    cv::Matx<double, 3, 3> Tm_inv(1, 0, -mx_, 0, 1, -my_, 0, 0, 1);
+
+    Mm2w_ = Tw_inv * Sc_inv * Sp_inv * R_inv * Tm_inv;
 #endif
 }
 
@@ -106,14 +113,18 @@ void LocalViewNode::callback_laser(const sensor_msgs::msg::LaserScan::SharedPtr 
     **/
 #if MR_VIZ__USE_MY_CODE_UP_TO >= 3
 #else
-    /**
-     * @node your code
-     **/
-    RCLCPP_INFO(this->get_logger(), "callback_laser"); /// remove this line if the callback works
-    // laser_measurments_.resize( ... );
-    // for ( size_t i = 0; i < scan_->ranges.size(); i++ ) {
-    //  
-    // }
+  laser_measurments_.resize(scan_->ranges.size());
+
+  for (size_t i = 0; i < scan_->ranges.size(); i++) {   
+    double angle = scan_->angle_min + (i * scan_->angle_increment);
+    
+    double d = scan_->ranges[i];
+    double x = (d * cos(angle)) + 0.15; //add .15 because the laser has a 15 cm offset
+    double y = d * sin(angle);
+
+    laser_measurments_[i] = cv::Vec<double, 3>(x, y, 1.0);
+   }
+
 #endif
 }
 
@@ -134,20 +145,15 @@ void LocalViewNode::on_timer()
 
   if(!laser_measurments_.empty()){
     std::scoped_lock lock(mutex_);  /// Whats the problem with this lock 
-
-    /**
-    * @ToDo Wanderer
-    * @see http://docs.ros.org/api/sensor_msgs/html/msg/LaserScan.html
-    * Iterate over the laser_measurments_ and plot the laser readings using LocalViewNode::w2m()
-    **/
+    //mutex looks the for the whole duration that drawing takes 
+    //because we use a for which is a very slow operation this can take up a while
+    //it would be faster to copy the scan data in the begin and lift the mutex and then 
+    //do the whole computation on the copy
+   
 #if MR_VIZ__USE_MY_CODE_UP_TO >= 4
 #else
-    /**
-     * @node your code
-     **/
-    for(double alpha = -M_PI; alpha < M_PI; alpha += M_PI/100.) {       /// @ToDo replace
-      cv::Vec < double, 3 > p ( cos ( alpha )*2.,  sin ( alpha )*2., 1.);   /// @ToDo remove
-      cv::circle(view_, w2m(p), 2, cv::Scalar(0, 255, 0) , 1, cv::LINE_AA);
+    for(size_t i =0; i<laser_measurments_.size(); i++){
+      cv::circle(view_, w2m(laser_measurments_[i]), 2, cv::Scalar(255, 16, 240) , 1, cv::LINE_AA);
     }
 #endif
   } else {
@@ -284,11 +290,7 @@ void LocalViewNode::draw_grid()
       cv::putText(view_, txt, cv::Point(10,10), cv::FONT_HERSHEY_PLAIN, 0.6, cv::Scalar(255,255,255), 3, cv::LINE_AA);
       cv::putText(view_, txt, cv::Point(10,10), cv::FONT_HERSHEY_PLAIN, 0.6, cv::Scalar(128,128,128), 1, cv::LINE_AA);
     }
-    /**
-     * @ToDo Wanderer
-     * change Maxima Musterfrau to your name
-     **/
-    cv::putText(view_, "Maxima Musterfrau", cv::Point(10,map_height_pix_-10), cv::FONT_HERSHEY_PLAIN, 0.6, cv::Scalar(128,128,128), 1, cv::LINE_AA);
+    cv::putText(view_, "Jana Grabher", cv::Point(10,map_height_pix_-10), cv::FONT_HERSHEY_PLAIN, 0.6, cv::Scalar(128,128,128), 1, cv::LINE_AA);
 
 
   /**
@@ -297,9 +299,12 @@ void LocalViewNode::draw_grid()
    **/
 #if MR_VIZ__USE_MY_CODE_UP_TO >= 5
 #else
-    /**
-     * @node your code
-     **/
+   //open CV can do format directly 
+  char temp_text[100]; 
+  sprintf(temp_text, "v = %.2f m/s", v);
+  cv::putText(view_,temp_text , cv::Point(map_width_pix_ - 50, 10), cv::FONT_HERSHEY_PLAIN, 0.6, cv::Scalar(255,0,0), 1, cv::LINE_AA);
+  sprintf(temp_text, "w = %.2f rad/s", w);
+  cv::putText(view_, temp_text, cv::Point(map_width_pix_-50,30), cv::FONT_HERSHEY_PLAIN, 0.6, cv::Scalar(0,0,255), 1, cv::LINE_AA);
 #endif
 
    }
@@ -311,9 +316,12 @@ void LocalViewNode::draw_grid()
    **/
 #if MR_VIZ__USE_MY_CODE_UP_TO >= 1
 #else
-    /**
-     * @node your code
-     **/
+void LocalViewNode::callback_cmd_vel(const geometry_msgs::msg::Twist::SharedPtr msg)
+{
+  twist_=msg; //Save last twist message
+  v=twist_->linear.x;
+  w=twist_->angular.z;
+}
 #endif
 
 #include "rclcpp_components/register_node_macro.hpp"

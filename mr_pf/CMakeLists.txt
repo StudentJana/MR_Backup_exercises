@@ -18,6 +18,7 @@ find_package(tf2_geometry_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(tuw_geometry REQUIRED)
+find_package(Boost REQUIRED)
 
 add_library(pf src/particle_filter.cpp src/particle_filter_visualization.cpp)
 target_include_directories(pf PUBLIC
@@ -26,7 +27,8 @@ target_include_directories(pf PUBLIC
 target_compile_features(pf PUBLIC c_std_99 cxx_std_23)  # Require C99 and C++23
 ament_target_dependencies(pf
   tuw_geometry
-  OpenCV)
+  OpenCV
+  Boost)
 
 add_executable(pf_node src/standalone_pf.cpp src/particle_filter_node.cpp src/particle_filter_node_parameter.cpp)
 target_include_directories(pf_node PUBLIC
@@ -44,7 +46,8 @@ ament_target_dependencies(pf_node
   tf2_geometry_msgs
   tf2_ros
   tuw_geometry
-  OpenCV)
+  OpenCV
+  Boost)
 
 install(TARGETS pf_node
   DESTINATION lib/${PROJECT_NAME})

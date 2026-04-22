@@ -4,6 +4,7 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include "mr_pf/particle_filter_visualization.hpp"
+#include <boost/range/adaptor/reversed.hpp>
 
 using namespace mr;
 using namespace tuw;
@@ -129,15 +130,11 @@ void ParticleFilterVisualization::plot_laser_measurement(const Pose2D &pose_vehi
     {
         /// @note Your code here
 
-        // tuw::Tf2D T = ...
-        // for (...)
-        // {
-        //     figure_->symbol(T * ...);
-        // }
-
-        // Dummy code below should be removed.
-        (void)pose_vehicle; /// to silence a warning about unused variables
-        (void)z;            /// to silence a warning about unused variables
+        
+        tuw::Tf2D T= pose_vehicle.tf() * tf_base_sensor_;
+        for (size_t i = 0; i < z.size(); i++){
+            figure_->symbol(T * z[i], 0.05, tuw::Figure::magenta, 2);
+        }
     }
 }
 
@@ -156,13 +153,19 @@ void ParticleFilterVisualization::plot_expected_measurments()
     else
     {
         /// @note your code here
-        // for (...)
-        // {
-        //    for (...)
-        //    {
-        //      ...
-        //    }
-        // }
+        for (int r=0; r < expected_measurments_.rows; r++)
+        {
+           for (int c=0; c < expected_measurments_.cols; c++)
+           {
+             if (expected_measurments_(r,c)>0){
+                cv::Vec3b &px = figure_->view().at<cv::Vec3b>(r, c);             
+                    
+                px[0] = 0;   
+                px[1] = 0;   
+                px[2] = 255; 
+             }
+           }
+        }
     }
 }
 
@@ -182,18 +185,33 @@ void ParticleFilterVisualization::plot_likelihood_field()
     }
     else
     {
-        /// @note your code here
+        double max;
+        cv::minMaxLoc(likelihood_field_, nullptr, &max);
 
-        // double max = ...
+        // std::cout << "DEBUG  Max probability in field: " << max << std::endl; //DEBUG
 
-        // for (...)
-        // {
-        //    for (...)
-        //    {
-        //      cv::Vec3b &px = figure_->background().at<cv::Vec3b>(r, c);
-        //      px[0] = ...;
-        //    }
+        for (int r = 0; r < likelihood_field_.rows; r++)
+        {
+            for (int c = 0; c < likelihood_field_.cols; c++)           
+            {
+                cv::Vec3b &px = figure_->background().at<cv::Vec3b>(r, c);             
+                px[0] =max >0 ?255- (uchar)(likelihood_field_(r,c)/max*255):0;
+            }
+        }
+
+        // //DEBUG
+        // std::cout << "DEBUG - 5x5 Center of likelihood_field_:" << std::endl;
+        // int center_r = likelihood_field_.rows / 2;
+        // int center_c = likelihood_field_.cols / 2;
+
+        // // Print a 5x5 square around the center pixel
+        // for (int r = center_r - 2; r <= center_r + 2; r++) {
+        //     for (int c = center_c - 2; c <= center_c + 2; c++) {
+        //         std::cout << likelihood_field_.at<double>(r, c) << "  ";
+        //     }
+        //     std::cout << std::endl;
         // }
+        //END DEBUG
     }
 }
 
@@ -221,5 +239,14 @@ void ParticleFilterVisualization::plot_samples()
         // for(auto sample : samples_) {
         //      figure_->symbol
         // }
+
+        double scale = 255.0 / samples_weight_max_;
+        for(auto sample : boost::adaptors::reverse(samples_)) {
+            double px= sample->get_x();
+            double py= sample->get_y();
+            double value=sample->weight()*scale;
+            cv::Scalar color(255-value, value, 0.0);
+            figure_->symbol(Point2D(px,py), 0.1, color );
+        }
     }
 }

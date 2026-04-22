@@ -99,26 +99,20 @@ void PFNode::callback_laser(const sensor_msgs::msg::LaserScan::SharedPtr msg)
     }
     else
     {
-        /// @note your code here
-
-        // geometry_msgs::msg::TransformStamped t = tf_buffer_->lookupTransform ...
-        // pose_sensor = tuw::Pose2D ...
-        // pose_sensor.recompute_cached_cos_sin();
-        // z_s.resize(msg->ranges.size());
-        // for (size_t i = 0; i < msg->ranges.size(); i++){
-        //     tuw::Polar2D beam(...);
-        //     tuw::Point2D p(...)
-        //     z_s[i] = std::pair<tuw::Point2D, tuw::Polar2D>(p, beam);
-        // }
-
-
-        /// Below is dummy code, that should be deleted
-        (void)msg; /// to silence a warning about unused variables
-        for (double alpha = -M_PI; alpha < M_PI; alpha += M_PI / 100.)
-        {
-            tuw::Polar2D beam(alpha, 2.);
-            pose_sensor.x() = 0.50;
-            z_s.push_back(std::pair<tuw::Point2D, tuw::Polar2D>(beam.point(), beam));
+        geometry_msgs::msg::TransformStamped transformStamped = tf_buffer_->lookupTransform(base_frame_, msg->header.frame_id, msg->header.stamp, rclcpp::Duration::from_seconds(0.1));
+        double x= transformStamped.transform.translation.x;
+        double y= transformStamped.transform.translation.y;
+        double yaw;
+        tuw::QuaternionToYaw(transformStamped.transform.rotation, yaw);
+        pose_sensor = tuw::Pose2D(x,y,yaw);
+        pose_sensor.recompute_cached_cos_sin();
+        z_s.resize(msg->ranges.size());
+        for (size_t i = 0; i < msg->ranges.size(); i++){
+            double alpha = msg->angle_min + (i * msg->angle_increment);
+            double range = msg->ranges[i];
+            tuw::Polar2D beam(alpha, range);
+            tuw::Point2D p=beam.point();
+            z_s[i] = std::pair<tuw::Point2D, tuw::Polar2D>(p, beam);
         }
     }
 

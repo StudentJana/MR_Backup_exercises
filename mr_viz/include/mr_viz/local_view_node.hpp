@@ -92,9 +92,11 @@ private:
    **/
 #if MR_VIZ__USE_MY_CODE_UP_TO >= 5
 #else
-    /**
-     * @node your code
-     **/
+  rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr sub_cmd_vel_;
+  void callback_cmd_vel(const geometry_msgs::msg::Twist::SharedPtr msg);
+  geometry_msgs::msg::Twist::SharedPtr twist_; 
+  double v = 0.0;
+  double w = 0.0;
 #endif
 
 };

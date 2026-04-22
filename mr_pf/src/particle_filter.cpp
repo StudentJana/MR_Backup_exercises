@@ -6,6 +6,7 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include "mr_pf/particle_filter.hpp"
+#include <boost/math/distributions/normal.hpp>
 
 using namespace mr;
 using namespace tuw;
@@ -180,11 +181,21 @@ void ParticleFilter::compute_weights(const vector<std::pair<tuw::Point2D, tuw::P
         /**
          * @note your code here
          **/
-        int step_size = z_s.size() / used_beams.size();
-        for (size_t i = 0; i < used_beams.size(); i++)
+        if(param_->random_beams_used) // random distribution
         {
-            size_t idx = i * step_size + step_size / 2.;
-            used_beams[i] = idx;
+            std::uniform_int_distribution<size_t>dist(0, z_s.size()-1);
+            for (size_t i = 0; i < used_beams.size(); i++)
+                used_beams[i] = dist(generator_);
+        }
+        else//equal distribution 
+        {
+            int step_size = z_s.size() / used_beams.size();
+            for (size_t i = 0; i < used_beams.size(); i++)
+            {
+                size_t idx = i * step_size + step_size / 2.;
+                used_beams[i] = idx;
+            }
+            
         }
     }
     double weight_sum = 0;
@@ -216,15 +227,21 @@ void ParticleFilter::compute_weights(const vector<std::pair<tuw::Point2D, tuw::P
                  * @note your code here for the scan-based sensor model
                  * Do not forget to check if the laser beam is inside the map
                  **/
-                (void)M;    /// to silence a warning about unused variables
-                (void)beam; /// to silence a warning about unused variables
+                if (beam.second.rho() >= range_max) 
+                    continue;
 
-                // double qr = param_->z_rand / range_max;
-                // Point2D p = M * beam.first;
+                double qr = param_->z_rand / range_max;
+                Point2D p = M * beam.first;
 
-                // qh = param_->z_hit * ...
+                int c = round(p.x());
+                int r = round(p.y());
 
-                // q *= ...
+                double qh=0.0;
+
+                if (c >= 0 && c < likelihood_field_.cols && r >= 0 && r < likelihood_field_.rows)
+                    qh = param_->z_hit * likelihood_field_(r,c);
+
+                q *= (qh + qr);
             }
         }
         s->weight() = q;
@@ -267,6 +284,8 @@ void ParticleFilter::compute_weights(const vector<std::pair<tuw::Point2D, tuw::P
 
                 // double p_zi = pseudo_density_fnc_(r,c);
                 // q *= p_zi
+
+
             }
         }
         s->weight() = q;
@@ -321,24 +340,34 @@ double ParticleFilter::compute_expected_measurment(const tuw::Polar2D &z_i, cons
          * The following lines should give you some hints
          **/
 
-        cv::line(expected_measurments_, pm_zero, (M * Point2D(1., 0., 1.)).cv(), cv::Scalar(0xEF));  /// remove
-        (void)z_i; /// to silence a warning about unused variables
-        /*
-        ...
+        //cv::line(expected_measurments_, pm_zero, (M * Point2D(1., 0., 1.)).cv(), cv::Scalar(0xEF));  /// remove
+        //(void)z_i; /// to silence a warning about unused variables
+
+        Point2D p_max_local(cos(z_i.alpha()) * range_max, sin(z_i.alpha()) * range_max);
+        cv::Point pm_max = (M * p_max_local).cv();
+
         cv::LineIterator it(map_, pm_zero, pm_max, 8);
+
         for (int i = 0; i < it.count; ++it, ++i){    
             uint8_t v = **it; 
+
+            cv::Point pm = it.pos();
+            if (pm.x < 0 || pm.x >= map_.cols || pm.y < 0 || pm.y >= map_.rows)
+                break;
+
             pm =  it.pos();      
             if(v == 0) {
-               
-                ... 
-                z_exp = 
+                double dx = (pm.x - pm_zero.x)/map_header_.scale_x();
+                double dy = (pm.y - pm_zero.y)/map_header_.scale_y();
+                z_exp = sqrt(dx*dx + dy*dy);
+                if (pm.x >= 0 && pm.x < expected_measurments_.cols && pm.y >= 0 && pm.y < expected_measurments_.rows) //make sure its a valid
+                    expected_measurments_(pm.y, pm.x) = 0xFF; 
+                break;
             } else {
-                ...
-                expected_measurments_(pm) = 0xFF;         /// Debug drawing
+                expected_measurments_(pm) = 0xFF;         //line to wall
             }
         } 
-        **/
+        
     }
     return z_exp;
 }
@@ -469,23 +498,36 @@ void ParticleFilter::compute_likelihood_field()
     }
     else
     {
-        /// @note your code
-        /// replace the following lines with your code
-        (void)normal_pdf; /// to silence a warning about unused variables
+        // /// @note your code
+        // /// replace the following lines with your code
+        // (void)normal_pdf; /// to silence a warning about unused variables
 
-        // cv::distanceTransform(...)
-        // Scale from px to meters ...
+        // // cv::distanceTransform(...)
+        // // Scale from px to meters ...
+
+        // for (int r = 0; r < likelihood_field_.rows; r++)
+        // {
+        //     for (int c = 0; c < likelihood_field_.cols; c++)
+        //     {
+        //         // boost::math::pdf(normal_distribution, ...)
+        //         // likelihood_field_(r, c) =
+
+        //         // Dummy code below, replace with your code
+        //         float v = (float)c / (float)likelihood_field_.cols;
+        //         likelihood_field_(r, c) = v;
+        //     }
+        // }
+
+        cv::distanceTransform(map_, distance_field_pixel_, cv::DIST_L2,5 );
+        distance_field_=distance_field_pixel_/map_header_.scale_x();
 
         for (int r = 0; r < likelihood_field_.rows; r++)
         {
             for (int c = 0; c < likelihood_field_.cols; c++)
             {
-                // boost::math::pdf(normal_distribution, ...)
-                // likelihood_field_(r, c) =
-
-                // Dummy code below, replace with your code
-                float v = (float)c / (float)likelihood_field_.cols;
-                likelihood_field_(r, c) = v;
+                float metric_distance = distance_field_(r, c);
+                double probability = normal_pdf(metric_distance, 0.0, param_->sigma_hit);            
+                likelihood_field_(r, c) = probability;
             }
         }
     }

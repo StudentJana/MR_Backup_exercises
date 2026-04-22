@@ -6,6 +6,7 @@ from rclpy.node import Node
 
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import LaserScan
+from std_msgs.msg import String
 
 
 class MRMove(Node):
@@ -14,28 +15,40 @@ class MRMove(Node):
         super().__init__('move')
         self.publisher_ = self.create_publisher(Twist, 'cmd_vel', 10)
         timer_period = 0.5  # seconds
+        timer_period_name = 10.0 
         self.declare_parameter('mode', 'demo')
         self.cmd = Twist()
         self.timer = self.create_timer(timer_period, self.timer_callback)
+        self.timer_name = self.create_timer(timer_period_name, self.timer_callback_name)
         self.timer_callback()
 
         #Add five parameters for real time changes
-        self.declare_parameter('safety_bubble', 0.4)
-        self.declare_parameter('safety_distance', 1.0)
-        self.declare_parameter('threshold', 2.0)
-        self.declare_parameter('max_speed', 0.8)
+        self.declare_parameter('safety_bubble', 0.5)
+        self.declare_parameter('safety_distance', 1.5)
+        self.declare_parameter('threshold', 2.5)
+        self.declare_parameter('max_speed', 0.6)
         self.declare_parameter('turn_speed', 0.3)
+        self.declare_parameter('robot_name', 'Indiana Jana')
 
         self.subscription = self.create_subscription(
             LaserScan,
             'scan',
             self.callback_laser,
             10)
+        
+        self.publisher_name = self.create_publisher(String, 'name', 10)
+
 
     def timer_callback(self):
         self.param_mode = self.get_parameter('mode').get_parameter_value().string_value
         self.publisher_.publish(self.cmd)
         self.get_logger().info('Publishing: "{0}, {1}"'.format(self.cmd.linear.x, self.cmd.angular.z))
+
+    def timer_callback_name(self):
+        msg = String()
+        msg.data = self.get_parameter('robot_name').get_parameter_value().string_value
+        self.publisher_name.publish(msg)
+        self.get_logger().info('Publishing: "{0}"'.format(self.get_parameter('robot_name').get_parameter_value().string_value))
 
 
     def callback_laser(self, msg: LaserScan):
@@ -121,11 +134,16 @@ class MRMove(Node):
         
         target_angle = (target_idx - center_idx) * scan.angle_increment
 
-        steering_velocity = np.clip(target_angle, -turn_speed, turn_speed)
-        self.cmd.angular.z = float(steering_velocity)
+        #steering_velocity = np.clip(target_angle, -turn_speed, turn_speed)
+        if abs(target_angle)>turn_speed: 
+            self.cmd.linear.x = 0.0
+            self.cmd.angular.z = turn_speed
+            return
+        
+        self.cmd.angular.z = float(target_angle)
 
         # Slow down for sharp turns
-        if abs(steering_velocity) > 0.3:
+        if abs(target_angle) > 0.2:
             self.cmd.linear.x = max_speed/3
         else: 
             self.cmd.linear.x = max_speed

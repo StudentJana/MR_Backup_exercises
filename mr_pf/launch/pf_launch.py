@@ -12,8 +12,11 @@ from launch_ros.actions import Node
 def generate_launch_description():
     
     ## Extract package name
-    pkg_name = 'mr_pf'
-    this_directory = get_package_share_directory(pkg_name)
+    # pkg_name = 'mr_pf'
+    # this_directory = get_package_share_directory(pkg_name)
+
+    this_directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    pkg_name = os.path.basename(this_directory)
             
     remappings = [('/scan', 'base_scan')]
     
@@ -34,11 +37,31 @@ def generate_launch_description():
         default_value=TextSubstitution(text='cave.png'),
         description='map image file')
     
+    def get_arguments(context, *args, **kwargs):
+        params_file = LaunchConfiguration('particle_filter_params_file').perform(context)
+        map_file = LaunchConfiguration('particle_filter_map_file').perform(context)
+
+        if '/' not in params_file:
+            final_params_file = os.path.join(this_directory, 'config', params_file)
+        else:
+            final_params_file = os.path.abspath(params_file)
+
+        if '/' not in map_file:
+            final_map_file = os.path.join(this_directory, 'config', 'maps', map_file)
+        else:
+            final_map_file = os.path.abspath(map_file)
+
+        return [
+            SetLaunchConfiguration('particle_filter_params_file', final_params_file),
+            SetLaunchConfiguration('particle_filter_map_file', final_map_file)
+        ]
+
 
     return LaunchDescription([
         particle_filter_level_arg,
         particle_filter_map_file_arg,
         particle_filter_params_arg,
+        OpaqueFunction(function=get_arguments),
         Node(
             package='mr_pf',
             executable='pf_node',
