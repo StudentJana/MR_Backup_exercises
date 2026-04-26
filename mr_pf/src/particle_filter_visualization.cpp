@@ -57,9 +57,33 @@ void ParticleFilterVisualization::callback_mouse(int event, int x, int y)
     }
     else
     {
-        /// @node your code
-        (void)x; /// to silence a warning about unused variables
-        (void)y; /// to silence a warning about unused variables
+        static Point2D down_coordinates;
+        //static cv::Point down_coordinates;
+        static bool down_pressed=false;
+
+        if (event==cv::EVENT_LBUTTONDOWN){
+            down_pressed=true;
+            down_coordinates=Point2D(x,y);
+            //down_coordinates=cv::Point(x, y);
+        }
+        else if (event== cv::EVENT_LBUTTONUP && down_pressed){
+            down_pressed=false;
+
+            //cv::Point up_coordinates(x, y);
+            Point2D up_coordinates(x,y);
+            Point2D down_coordinates_world= figure_->m2w(down_coordinates);
+            Point2D up_coordinates_world= figure_->m2w(up_coordinates);
+
+
+            float theta=atan2(up_coordinates_world.get_y()-down_coordinates_world.get_y(), up_coordinates_world.get_x()-down_coordinates_world.get_x());
+            
+            Pose2D p(down_coordinates_world, theta);
+            set_init_pose(p);
+
+            reset_=Reset::INTI_POSE;
+            this->reset_samples();
+        }
+
     }
     if (event == cv::EVENT_RBUTTONUP)
     {

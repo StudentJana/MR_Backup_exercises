@@ -554,8 +554,60 @@ void ParticleFilter::update(const Command2DConstPtr u, double dt)
         }
         else
         {
-            /// @node your code
-            (void)dt; /// to silence a warning about unused variables
+
+            double delta_t = (param_->motion_dt_override > 0) ? param_->motion_dt_override : dt;
+            double v=u->v();
+            double w=u->w();
+
+            // if (std::abs(v) < 0.001 && std::abs(w) < 0.001) //if robots stops moving stop particles
+            //     return;
+
+            //lecture algorithm 
+            double t1=param_->alpha1*v*v;
+            double t2=param_->alpha2*w*w;
+            double t3=param_->alpha3*v*v;
+            double t4=param_->alpha4*w*w;
+            double t5=param_->alpha5*v*v;
+            double t6=param_->alpha6*w*w;
+
+            //issue algorithm 
+            // double t1=param_->alpha1*abs(v);
+            // double t2=param_->alpha2*abs(w);
+            // double t3=param_->alpha3*abs(v);
+            // double t4=param_->alpha4*abs(w);
+            // double t5=param_->alpha5*abs(v);
+            // double t6=param_->alpha6*abs(w);
+            
+            double sigma_v = std::sqrt(t1+t2);
+            double sigma_w = std::sqrt(t3+t4);
+            double sigma_y = std::sqrt(t5+t6);
+            
+            double v_hat = v + normal_distribution_(generator_) * sigma_v;
+            double w_hat = w + normal_distribution_(generator_) * sigma_w;
+            double y_hat = normal_distribution_(generator_) * sigma_y;
+
+            double theta = s->get_theta();
+            double x=s->get_x();
+            double y= s->get_y();
+
+            double x_dash;
+            double y_dash;
+            double theta_dash;
+
+            if (std::abs(w_hat) > 1e-5){
+                x_dash=x-v_hat/w_hat*sin(theta)+v_hat/w_hat*sin(theta+w_hat*delta_t);
+                y_dash=y+v_hat/w_hat*cos(theta)-v_hat/w_hat*cos(theta+w_hat*delta_t);
+                theta_dash=theta+w_hat*delta_t+y_hat*delta_t;
+            }
+            else{
+                x_dash = x + v_hat * delta_t * cos(theta);
+                y_dash = y + v_hat * delta_t * sin(theta);
+                theta_dash = theta + y_hat * delta_t;
+            }
+            s->set_x(x_dash);
+            s->set_y(y_dash);
+            s->set_theta(theta_dash);
+            s->recompute_cached_cos_sin();          
         }
     }
     processing_time_update_ = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - time_update_start);
