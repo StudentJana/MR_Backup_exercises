@@ -128,7 +128,7 @@ Implement the missing *pose correction* in *EKF::correction()*.
 
 
 ## Debug vs. Release (5 Points)
-Document the performance gains of the particle filter with screenshots, ensuring your setup is compiled in Release mode with -O3 optimization.
+Document the performance gains of your particle filter and EKF implementations when compiling in Debug and Release modes. Release mode includes the `-O3` optimization flag.
 
 ## ROS Tooling (5 Points)
 There are no `To-Do`'s for this part.
