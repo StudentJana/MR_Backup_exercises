@@ -1,0 +1,13 @@
+# ./.tmuxinator.yml
+
+name: mr
+
+windows:
+  - simulation:
+      layout: main-horizontal
+      panes:
+      - ros2 run mr_ekf ekf_node --ros-args -r scan:=base_scan --params-file ./ws02/install/mr_ekf/share/mr_ekf/config/ekf_params.yaml
+      - ros2 launch stage_ros2 stage.launch.py world:=lines
+      - ros2 run teleop_twist_keyboard teleop_twist_keyboard
+      #- ros2 run mr_move move_node.py --ros-args -r scan:=base_scan -p mode:=demo
+      - ros2 run tuw_laserscan_features composed_node --ros-args -r scan:=base_scan

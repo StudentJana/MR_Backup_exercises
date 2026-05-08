@@ -1,0 +1,9 @@
+ekf:
+  ros__parameters:
+      map_file: ./ws02/install/mr_ekf/share/mr_ekf/config/maps/line.png
+      map_linesegments_file: ./ws02/install/mr_ekf/share/mr_ekf/config/maps/line.yml
+      alpha_1: 0.1
+      alpha_2: 0.1
+      alpha_3: 0.1
+      alpha_4: 0.1
+      use_sim_time: true
