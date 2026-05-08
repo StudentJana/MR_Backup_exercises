@@ -6,4 +6,5 @@ The exercises are released in time.
 1. [Wanderer](02/Wanderer.md)
 1. [Sensor Models](03/SensorModel.md)
 1. [Motion Models](04/MotionModel.md)
+1. [EKF Selflocalization](05/EKF-Selflocalization.md)
 
