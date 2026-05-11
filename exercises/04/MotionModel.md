@@ -80,7 +80,7 @@ Re-sampling has to be done in `ParticleFilter::resample()`. As mentioned we want
 
 1. The strategy `KEEP_BEST` is a very simple approach. Remove the _M_ lowest weighted particles and clone the top _M_ weighted ones (10 Points).
 
-2. The strategy `LOW_VARIANCE` is a low variance sampling (Thrun 2005 on page 109) (10 Points).
+2. The strategy `LOW_VARIANCE` is a low variance sampling (Thrun 2005 on page 109). However, the strategy defined in the book is too eager to converge on poor (but best available) particles. Therefore, you should clone only the top _M_ weighted particles and think about which samples to exclude to remain under the desired particle count after resampling. (10 Points)
 
 When cloning, you should also add a small noise onto the new particle. (7 Points) 
 Hint: use `SamplePose2DPtr &ParticleFilter::sample_normal(SamplePose2DPtr &des, tuw::Pose2D &src, double sigma_position, double sigma_orientation)`.
